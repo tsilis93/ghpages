@@ -2,7 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://tsilis93.github.io/my-app",
+  "homepage": "https://tsilis93.github.io/ghpages",
   "dependencies": {
     "@tanstack/react-query": "^5.66.0",
     "axios": "^1.7.9",
