@@ -10,61 +10,59 @@ const Suggestions = ({ data, setUsername, showSuggestions, setShowSuggestions })
     const [errorText, setErrorText] = useState(null);   //inform user that nothing found
     const [error, setError] = useState(false);  //hook to trigger errorText display
 
-
-    const fetchSuggestions = async (data) => {  //function to retrieve suggestions
-
-        if (!showSuggestions) {  //if we dont want any suggestions return 
-            setSuggestions([]);
-            setSearching(false);
-            setErrorText(null);
-            setError(false);
-            return;   
-        }
-
-        try {
-            setSearching(true); 
-
-            /* API CALL */
-            const response = await axios.get(`https://api.github.com/search/users?q=${data}`);
-            
-            if (response.data.total_count === 0) {  //response is ok but nothing found
-                setSuggestions([]);
-                setErrorText("No username found");
-                setError(true);
-            }
-            else
-            {
-                setSuggestions(response.data.items);    //response is ok and retrieve the data
-                setErrorText(null); //no error 
-                setError(false);
-            }
-
-        } catch(error) {    //something went wrong or no data found
-            //console.log(error);
-            setSuggestions([]);
-        } 
-        finally {
-            setSearching(false);
-        }
-
-    }
-
-    //if user stop typing then send data for the search
-    const debouncedFetchSuggestions = debounce(fetchSuggestions, 500);
-
     //hook to detect if user is entering data
     useEffect(() => {
+
+        const fetchSuggestions = async (data) => {  //function to retrieve suggestions
+
+            if (!showSuggestions) {  //if we dont want any suggestions return 
+                setSuggestions([]);
+                setSearching(false);
+                setErrorText(null);
+                setError(false);
+                return;   
+            }
+
+            try {
+                setSearching(true); 
+
+                /* API CALL */
+                const response = await axios.get(`https://api.github.com/search/users?q=${data}`);
+                
+                if (response.data.total_count === 0) {  //response is ok but nothing found
+                    setSuggestions([]);
+                    setErrorText("No username found");
+                    setError(true);
+                }
+                else
+                {
+                    setSuggestions(response.data.items);    //response is ok and retrieve the data
+                    setErrorText(null); //no error 
+                    setError(false);
+                }
+
+            } catch(error) {    //something went wrong or no data found
+                //console.log(error);
+                setSuggestions([]);
+            } 
+            finally {
+                setSearching(false);
+            }
+
+        }
+        //if user stop typing then send data for the search
+        const debouncedFetchSuggestions = debounce(fetchSuggestions, 500);
 
         if (data !== "") {
             debouncedFetchSuggestions(data); // Call the debounced function
         } else {
             setSuggestions([]); // Clear suggestions if data is empty
-            setShowSuggestions(false);
+            setError(null);
         }
  
         return () => debouncedFetchSuggestions.cancel();
 
-    }, [data]);
+    }, [data, showSuggestions]);
 
 
     const handleSuggestionClick = (suggestion) => {
@@ -74,7 +72,7 @@ const Suggestions = ({ data, setUsername, showSuggestions, setShowSuggestions })
     };
 
     if(searching) return <div className="searching">Searching...</div>
-    if(error && showSuggestions) return <div className="nothingFound">{errorText}</div>
+    if(error) return <div className="nothingFound">{errorText}</div>
 
     return (
         suggestions.length > 0 && showSuggestions && (

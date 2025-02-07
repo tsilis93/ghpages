@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import Profile from './components/Profile';
 import Suggestions from './components/Suggestions';
 import Repositories from './components/Repositories';
@@ -16,13 +16,8 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showSuggestions, setShowSuggestionsState] = useState(true); //hook to manage suggestions
+  const [showSuggestions, setShowSuggestions] = useState(true); //hook to manage suggestions
   const [resetPage, setResetPage] = useState(false);  //hook in order to reset page in Repositories component
-
-
-  const setShowSuggestions = useCallback((value) => {
-    setShowSuggestionsState(value);
-  }, []); 
 
   
   const fetchUserData = async (searchQuery) => {
